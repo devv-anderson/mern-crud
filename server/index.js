@@ -25,6 +25,29 @@ app.post("/createUser", async (req, res) => {
     res.json("User created succefuly!")
 })
 
+app.put("/updateUser", async (req, res) => {
+   const id = req.body.id
+   const newName = req.body.newName
+
+    try{
+      await UserModel.findById(id, (err, updatedUser) => {
+            updatedUser.name = newName
+            updatedUser.save()
+            res.send("Updated")
+        }).clone() // clone() resolve the MongooseError: Query was already executed
+    }catch(err){
+       console.log(err)
+    }
+
+})
+
+app.delete("/deleteUser/:id", async (req, res) => {
+    const id = req.params.id
+
+    await UserModel.findByIdAndDelete(id).exec()
+    res.send("Deleted")
+})
+
 app.listen(3001, () => {
     console.log("Server running!")
 })
